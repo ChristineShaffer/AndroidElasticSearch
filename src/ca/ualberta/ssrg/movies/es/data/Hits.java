@@ -1,3 +1,5 @@
+// Class to receive hits results
+
 package ca.ualberta.ssrg.movies.es.data;
 
 import java.util.List;

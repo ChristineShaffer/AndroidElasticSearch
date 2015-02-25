@@ -1,3 +1,5 @@
+// Class to receive search results
+
 package ca.ualberta.ssrg.movies.es.data;
 
 

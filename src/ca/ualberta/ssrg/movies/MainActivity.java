@@ -19,6 +19,7 @@ import ca.ualberta.ssrg.androidelasticsearch.R;
 import ca.ualberta.ssrg.movies.es.ESMovieManager;
 import ca.ualberta.ssrg.movies.es.IMovieManager;
 import ca.ualberta.ssrg.movies.es.Movie;
+import ca.ualberta.ssrg.movies.es.data.SimpleSearchCommand;
 
 public class MainActivity extends Activity {
 
@@ -73,6 +74,8 @@ public class MainActivity extends Activity {
 				Movie movie = movies.get(position);
 				Toast.makeText(mContext, "Deleting " + movie.getTitle(), Toast.LENGTH_LONG).show();
 
+				// Multithreading
+				// Doing HTTP communication on one thread then switch back to UI tread
 				Thread thread = new DeleteThread(movie.getId());
 				thread.start();
 
@@ -85,6 +88,9 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
+		Thread thread = new SearchThread();
+		thread.start();
+		
 		// Refresh the list when visible
 		// TODO: Search all
 		
@@ -125,7 +131,52 @@ public class MainActivity extends Activity {
 
 
 	class SearchThread extends Thread {
-		// TODO: Implement search thread
+		
+		@Override
+		public void run() {
+			
+			// AUTOMATIC IMPORTS NOT WORKING???
+			
+			HttpClient client = new DefaultHttpClient();
+			HttpPost post = new HttpPost("http://cmput301.softwareprocess.es:8080/testing/movie/");
+			Gson gson = new Gson();
+			String string = gson.toJson(new SimpleSearchCommand(""));
+			
+			StringEntity stringEntity = null;
+			try {
+				stringEntity = new StringEntity(string);
+			} catch (UnsopportedEncodingException e) {
+				throw new RuntimeException(e);
+			}
+			
+			post.setHeader("Accept", "application/json");
+			post.setEntity(stringEntity);
+			
+			HttpResponse response;
+			
+			try {
+				response = client.execute(post);
+			} catch (ClientProtocolException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			
+			Type searchResponseType = new TypeToken<SearchResponse<Movie>>() {
+			}.getType();
+			
+			try {
+				SearchResponse<Movie> = gson.fromJson(new InputStreamReader(response.getEntity().getContent(), searchResponseType));
+			} catch (JsonIOException e) {
+				throw new RuntimeException(e);
+			} catch (JsonSyntaxException e) {
+				throw new RuntimeException(e);
+			} catch (IllegalStateException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
 		
 	}
 

@@ -38,7 +38,7 @@ public class ESMovieManager implements IMovieManager {
 	}
 
 	/**
-	 * Get a movie with the specified id
+	 * Get a movie with the specified id ---- like using curl to get movie with an id
 	 */
 	public Movie getMovie(int id) {
 
@@ -53,6 +53,7 @@ public class ESMovieManager implements IMovieManager {
 			return sr.getSource();
 
 		} catch (Exception e) {
+			// DON'T DO THIS
 			e.printStackTrace();
 		} 
 
